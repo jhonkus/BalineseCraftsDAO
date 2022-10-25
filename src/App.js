@@ -1,9 +1,9 @@
 import { useAddress, useContract, useNetwork } from "@thirdweb-dev/react";
 import { useState, useEffect, useMemo } from "react";
 import { ConnectWallet } from "@thirdweb-dev/react";
-import { Button, Table, Row, Col } from "react-bootstrap";
+import { Button, Table, Row, Col, Image } from "react-bootstrap";
 import { AddressZero } from "@ethersproject/constants";
-import { ChainId } from '@thirdweb-dev/sdk';
+import { ChainId } from "@thirdweb-dev/sdk";
 
 import "./styles/Home.css";
 
@@ -324,7 +324,6 @@ export default function App() {
     }
   };
 
-  
   // We also need to check if the user already voted.
   useEffect(() => {
     if (!hasClaimedNFT) {
@@ -356,13 +355,16 @@ export default function App() {
     checkIfUserHasVoted();
   }, [hasClaimedNFT, proposals, address, vote?.contract]);
 
-  if (address && (network?.[0].data.chain.id !== ChainId.Goerli)) {
+  if (address && network?.[0].data.chain.id !== ChainId.Goerli) {
     return (
-      <div className="unsupported-network text-center" style={{marginTop:'20px'}}>
+      <div
+        className="unsupported-network text-center"
+        style={{ marginTop: "20px" }}
+      >
         <h2>Please connect to Goerli</h2>
         <p>
-          This dapp only works on the Goerli network, please switch networks
-          in your connected wallet.
+          This dapp only works on the Goerli network, please switch networks in
+          your connected wallet.
         </p>
       </div>
     );
@@ -397,34 +399,33 @@ export default function App() {
           </div>
         )}
 
-        {/* <div className="grid">
-          <a href="/" className="card">
-            <h2>Bali Paintings &rarr;</h2>
-            <p>
-              Here you can see Paintings collections.
-              <br />
-              <br />
-            </p>
-          </a>
+        <div className="grid">
+          <div className="card">
+            <h2>Silver</h2>
+            <Image
+              src={window.location.origin + "/images/silver.jpg"}
+              style={{ width: "200px", height: "200px" }}
+            />
+          </div>
 
-          <a href="/" className="card">
-            <h2>Bali Statues&rarr;</h2>
-            <p>
-              This is a collection of Balinese Statues made of wood.
-              <br />
-              <br />
-            </p>
-          </a>
+          <div className="card">
+            <h2>Statue</h2>
+            <Image
+              src={window.location.origin + "/images/oldman.jpg"}
+              style={{ width: "200px", height: "200px" }}
+            />
+          </div>
 
-          <a href="/" className="card">
-            <h2>Bali Crafts &rarr;</h2>
-            <p>
-              This is a collection of knick-knacks made by Balinese craftsmen.
-            </p>
-          </a>
-        </div> */}
+          <div className="card">
+            <h2>Painting</h2>
+            <Image
+              src={window.location.origin + "/images/dancer.jpg"}
+              style={{ width: "200px", height: "200px" }}
+            />
+          </div>
+        </div>
 
-        {hasClaimedNFT && 
+        {hasClaimedNFT && (
           <>
             <div className="member-page">
               <h3>Congratulations on being a members.</h3>
@@ -439,7 +440,7 @@ export default function App() {
               </Col>
             </Row>
           </>
-        }
+        )}
       </main>
     </div>
   );
