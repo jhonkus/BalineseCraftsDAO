@@ -385,7 +385,7 @@ export default function App() {
           <ConnectWallet />
         </div>
 
-        {!hasClaimedNFT && (
+        {!hasClaimedNFT &&  address && (
           <div className="text-center mintNft">
             <h3>Mint your free Balinese Arts Membership NFT</h3>
             <p className="description">
