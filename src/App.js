@@ -1,8 +1,10 @@
-import { useAddress, useContract } from "@thirdweb-dev/react";
+import { useAddress, useContract, useNetwork } from "@thirdweb-dev/react";
 import { useState, useEffect, useMemo } from "react";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import { Button, Table, Row, Col } from "react-bootstrap";
 import { AddressZero } from "@ethersproject/constants";
+import { ChainId } from '@thirdweb-dev/sdk';
+
 import "./styles/Home.css";
 
 export default function App() {
@@ -29,6 +31,8 @@ export default function App() {
   const address = useAddress();
   // const connectWithMetamask = useMetamask();
   console.log("👋 Address:", address);
+
+  const network = useNetwork();
 
   const ActiveProposals = () => {
     return (
@@ -65,11 +69,11 @@ export default function App() {
             // first we need to make sure the user delegates their token to vote
             try {
               //we'll check if the wallet still needs to delegate their tokens before they can vote
-              const delegation = await token.getDelegationOf(address);
+              const delegation = await token.contract.getDelegationOf(address);
               // if the delegation is the 0x0 address that means they have not delegated their governance tokens yet
               if (delegation === AddressZero) {
                 //if they haven't delegated their tokens yet, we'll have them delegate them before voting
-                await token.delegateTo(address);
+                await token.contract.delegateTo(address);
               }
               // then we need to vote on the proposals
               try {
@@ -77,11 +81,11 @@ export default function App() {
                   votes.map(async ({ proposalId, vote: _vote }) => {
                     // before voting we first need to check whether the proposal is open for voting
                     // we first need to get the latest state of the proposal
-                    const proposal = await vote.get(proposalId);
+                    const proposal = await vote.contract.get(proposalId);
                     // then we check if the proposal is open for voting (state === 1 means it is open)
                     if (proposal.state === 1) {
                       // if it is open for voting, we'll vote on it
-                      return vote.vote(proposalId, _vote);
+                      return vote.contract.vote(proposalId, _vote);
                     }
                     // if the proposal is not open for voting we just return nothing, letting us continue
                     return;
@@ -93,11 +97,11 @@ export default function App() {
                   await Promise.all(
                     votes.map(async ({ proposalId }) => {
                       // we'll first get the latest state of the proposal again, since we may have just voted before
-                      const proposal = await vote.get(proposalId);
+                      const proposal = await vote.contract.get(proposalId);
 
                       //if the state is in state 4 (meaning that it is ready to be executed), we'll execute the proposal
                       if (proposal.state === 4) {
-                        return vote.execute(proposalId);
+                        return vote.contract.execute(proposalId);
                       }
                     })
                   );
@@ -320,6 +324,7 @@ export default function App() {
     }
   };
 
+  
   // We also need to check if the user already voted.
   useEffect(() => {
     if (!hasClaimedNFT) {
@@ -350,6 +355,18 @@ export default function App() {
     };
     checkIfUserHasVoted();
   }, [hasClaimedNFT, proposals, address, vote?.contract]);
+
+  if (address && (network?.[0].data.chain.id !== ChainId.Goerli)) {
+    return (
+      <div className="unsupported-network text-center" style={{marginTop:'20px'}}>
+        <h2>Please connect to Goerli</h2>
+        <p>
+          This dapp only works on the Goerli network, please switch networks
+          in your connected wallet.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
