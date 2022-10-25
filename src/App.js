@@ -376,6 +376,7 @@ export default function App() {
         <h1 className="title">Welcome to Bali Arts DAO</h1>
 
         <p className="description">
+         <b>Warning: <span style={{color:'red'}}>For educational purposes only.</span></b><br/>
           Here you can see some of our Balinese Art collections including
           Paintings, Sculptures and Various Handicrafts made by artisans from
           Bali, Indonesia.
